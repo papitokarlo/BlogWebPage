@@ -96,22 +96,39 @@ class CommentViewSet(viewsets.ModelViewSet):
             return Response({"message": "You cant delete this comment"}, status=status.HTTP_403_FORBIDDEN)
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class BaseViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
+    serializer_class = None
+    queryset = None
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.queryset
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+class TagViewSet(BaseViewSet):
 
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
-class MenuViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+class MenuViewSet(BaseViewSet):
 
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+class CategoryViewSet(BaseViewSet):
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
