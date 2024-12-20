@@ -8,6 +8,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.urls import reverse
 from django.core.mail import send_mail
 from rest_framework.permissions import IsAuthenticated
+from django.conf import settings
 
 from .serializers import (
     RegisterSerializer,
@@ -42,8 +43,8 @@ class RegisterViewSet(viewsets.GenericViewSet):
             send_mail(
                 "Activate Your Account",
                 f"Click the link to activate your account: {activation_link}",
-                "begadze.zura@gmail.com",
-                [user.email],
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user.email],
                 fail_silently=False,
             )
             return Response({"message": "User registered. Activation email sent."}, status=status.HTTP_201_CREATED)
