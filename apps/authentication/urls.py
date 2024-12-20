@@ -8,6 +8,7 @@ from apps.authentication.views import (
     PasswordResetViewSet,
     PasswordResetConfirmViewSet,
     UserViewSet,
+    LogoutViewSet,
 )
 
 router = DefaultRouter()
@@ -18,6 +19,7 @@ router.register('login', LoginViewSet, basename='login')
 router.register('password-reset', PasswordResetViewSet, basename='password-reset')
 router.register('', PasswordResetConfirmViewSet, basename='password-reset-confirm')
 router.register('user', UserViewSet, basename='user')
+router.register('logout', LogoutViewSet, basename='logout')
 
 
 urlpatterns = [
